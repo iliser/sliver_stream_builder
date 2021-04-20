@@ -93,6 +93,20 @@ class _StreamSliverBuilderState<T> extends State<StreamSliverBuilder<T>> {
   }
 
   @override
+  void didUpdateWidget(covariant StreamSliverBuilder<T> oldWidget) {
+    if (identical(oldWidget.stream, widget.stream) != true) {
+      data = [];
+      sub.cancel();
+      sub = widget.stream.listen(
+        addElement,
+        onDone: onDone,
+        onError: onError,
+      );
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   void dispose() {
     sub.cancel();
     super.dispose();
