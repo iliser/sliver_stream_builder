@@ -7,6 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'sliver_stream_builder_localization.dart';
 
+Widget _defaultBuilder(ctx, delegate) => SliverList(
+      delegate: delegate,
+    );
+
 // TODO export to package, change name
 class StreamSliverBuilder<T> extends StatefulWidget {
   /// Stream can't be changed later
@@ -15,6 +19,8 @@ class StreamSliverBuilder<T> extends StatefulWidget {
   final Widget Function(BuildContext context)? progressBuilder;
 
   final Widget Function(BuildContext context)? emptyBuilder;
+  final Widget Function(BuildContext context, SliverChildDelegate delegate)?
+      sliverBuilder;
 
   /// Error processing.
   /// If component recieve error from stream, component request pause on stream and await while resume call
@@ -32,6 +38,7 @@ class StreamSliverBuilder<T> extends StatefulWidget {
     this.errorTextExtractor,
     this.errorBuilder,
     this.localization,
+    this.sliverBuilder = _defaultBuilder,
   }) : super(key: key);
   @override
   _StreamSliverBuilderState<T> createState() => _StreamSliverBuilderState<T>();
@@ -163,6 +170,9 @@ class _StreamSliverBuilderState<T> extends State<StreamSliverBuilder<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return SliverList(delegate: SliverChildBuilderDelegate(_currentBuilder));
+    return widget.sliverBuilder!(
+      context,
+      SliverChildBuilderDelegate(_currentBuilder),
+    );
   }
 }
